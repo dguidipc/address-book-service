@@ -71,7 +71,7 @@ public:
 Q_SIGNALS:
     void contactsAdded(QList<QContactId> ids);
     void contactsRemoved(QList<QContactId> ids);
-    void contactsUpdated(QList<QContactId> ids);
+    void contactsUpdated(QList<QContactId> ids, QList<QContactDetail::DetailType> types);
     void serviceChanged();
 
 private Q_SLOTS:
@@ -92,6 +92,7 @@ private:
     QSharedPointer<QDBusInterface> m_iface;
     QString m_serviceName;
     QList<QContactRequestData*> m_runningRequests;
+    QMap<QString, QtContacts::QContactCollection> m_collections;
 
     Q_INVOKABLE void initialize();
     Q_INVOKABLE void deinitialize();
@@ -124,6 +125,8 @@ private:
     void destroyRequest(QContactRequestData *request);
 
     QList<QContactId> parseIds(const QStringList &ids) const;
+
+    QList<QContactDetail::DetailType> parseTypes(const QStringList &ids) const;
 };
 
 }

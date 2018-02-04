@@ -103,7 +103,7 @@ Source QContactSaveRequestData::nextGroup()
 
 void QContactSaveRequestData::updateCurrentContactId(GaleraEngineId *engineId)
 {
-    QContactId contactId(engineId);
+    QContactId contactId(engineId->managerUri(), engineId->toByteArray());
     QContact &contact = m_contactsToCreate[m_currentContact.key()];
     contact.setId(contactId);
     m_pendingContacts.remove(m_currentContact.key());
@@ -121,7 +121,7 @@ void QContactSaveRequestData::updateCurrentGroup(const Source &group, const QStr
 {
     galera::GaleraEngineId *engineId = new galera::GaleraEngineId(QString("source@%1").arg(group.id()),
                                                                   managerUri);
-    QContactId id = QContactId(engineId);
+    QContactId id = QContactId(engineId->managerUri(), engineId->toByteArray());
     m_contactsToCreate[m_currentGroup.key()] = group.toContact(id);
     m_pendingGroups.remove(m_currentGroup.key());
 }
@@ -138,7 +138,7 @@ void QContactSaveRequestData::updatePendingGroups(const SourceList &groups, cons
         const Source &group = groups.at(index);
         galera::GaleraEngineId *engineId = new galera::GaleraEngineId(QString("source@%1").arg(group.id()),
                                                                       managerUri);
-        QContactId id = QContactId(engineId);
+        QContactId id = QContactId(engineId->managerUri(), engineId->toByteArray());
         m_contactsToUpdate.insert(key, group.toContact(id));
         index++;
     }

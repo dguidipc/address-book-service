@@ -52,7 +52,7 @@ GaleraEngineId::GaleraEngineId(const QMap<QString, QString> &parameters, const Q
     m_managerUri = QContactManager::buildUri("galera", parameters);
 }
 
-bool GaleraEngineId::isEqualTo(const QtContacts::QContactEngineId *other) const
+bool GaleraEngineId::isEqualTo(const GaleraEngineId *other) const
 {
     Q_ASSERT(other);
     if (!other) {
@@ -65,7 +65,7 @@ bool GaleraEngineId::isEqualTo(const QtContacts::QContactEngineId *other) const
     return true;
 }
 
-bool GaleraEngineId::isLessThan(const QtContacts::QContactEngineId *other) const
+bool GaleraEngineId::isLessThan(const GaleraEngineId *other) const
 {
     Q_ASSERT(other);
     if (!other) {
@@ -91,7 +91,30 @@ QString GaleraEngineId::toString() const
     return m_contactId;
 }
 
-QtContacts::QContactEngineId* GaleraEngineId::clone() const
+static inline QByteArray escapeColon(const QByteArray &param)
+{
+    QByteArray ret;
+    const int len = param.length();
+    ret.reserve(len + (len >> 3));
+    for (QByteArray::const_iterator it = param.begin(), end = param.end(); it != end; ++it) {
+        switch (*it) {
+            case ':':
+                ret += "&#58;";
+                break;
+            default:
+                ret += *it;
+                break;
+        }
+    }
+    return ret;
+}
+
+QByteArray GaleraEngineId::toByteArray() const
+{
+    return (escapeColon(QByteArray().append(toString())));
+}
+
+GaleraEngineId* GaleraEngineId::clone() const
 {
     return new GaleraEngineId(m_contactId, m_managerUri);
 }

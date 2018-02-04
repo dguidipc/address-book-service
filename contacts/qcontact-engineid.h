@@ -19,12 +19,12 @@
 #ifndef __GALERA_QCONTACT_ENGINEID_H__
 #define __GALERA_QCONTACT_ENGINEID_H__
 
-#include <qcontactengineid.h>
+#include <QtCore/QSharedData>
 
 namespace galera
 {
 
-class GaleraEngineId : public QtContacts::QContactEngineId
+class GaleraEngineId : public QSharedData
 {
 public:
     GaleraEngineId();
@@ -33,21 +33,22 @@ public:
     GaleraEngineId(const GaleraEngineId &other);
     GaleraEngineId(const QMap<QString, QString> &parameters, const QString &engineIdString);
 
-    bool isEqualTo(const QtContacts::QContactEngineId *other) const;
-    bool isLessThan(const QtContacts::QContactEngineId *other) const;
+    bool isEqualTo(const GaleraEngineId *other) const;
+    bool isLessThan(const GaleraEngineId *other) const;
 
     QString managerUri() const;
 
-    QContactEngineId* clone() const;
+    GaleraEngineId* clone() const;
 
     QString toString() const;
+    QByteArray toByteArray() const;
 
 #ifndef QT_NO_DEBUG_STREAM
     QDebug& debugStreamOut(QDebug &dbg) const;
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend QDataStream& operator<<(QDataStream& out, const GaleraEngineId& filter);
-    friend QDataStream& operator>>(QDataStream& in, GaleraEngineId& filter);
+    friend QDataStream& operator<<(QDataStream& out, const GaleraEngineId& engineId);
+    friend QDataStream& operator>>(QDataStream& in, GaleraEngineId& engineId);
 #endif
     uint hash() const;
 

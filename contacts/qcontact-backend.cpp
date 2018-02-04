@@ -50,7 +50,7 @@ QtContacts::QContactManagerEngine* GaleraEngineFactory::engine(const QMap<QStrin
     return engine;
 }
 
-QtContacts::QContactEngineId* GaleraEngineFactory::createContactEngineId(const QMap<QString, QString> &parameters,
+GaleraEngineId* GaleraEngineFactory::createContactEngineId(const QMap<QString, QString> &parameters,
                                                                          const QString &engineIdString) const
 {
     return new GaleraEngineId(parameters, engineIdString);
@@ -77,7 +77,7 @@ GaleraManagerEngine::GaleraManagerEngine()
 {
     connect(m_service, SIGNAL(contactsAdded(QList<QContactId>)), this, SIGNAL(contactsAdded(QList<QContactId>)));
     connect(m_service, SIGNAL(contactsRemoved(QList<QContactId>)), this, SIGNAL(contactsRemoved(QList<QContactId>)));
-    connect(m_service, SIGNAL(contactsUpdated(QList<QContactId>)), this, SIGNAL(contactsChanged(QList<QContactId>)));
+    connect(m_service, SIGNAL(contactsUpdated(QList<QContactId>, QList<QContactDetail::DetailType>)), this, SIGNAL(contactsChanged(QList<QContactId>, QList<QContactDetail::DetailType>)));
     connect(m_service, SIGNAL(serviceChanged()), this, SIGNAL(dataChanged()), Qt::QueuedConnection);
 }
 

@@ -303,7 +303,7 @@ void GaleraContactsService::fetchContactsPage(QContactFetchRequestData *data)
         return;
     }
 
-    // Load contacs async
+    // Load contacts async
     QDBusPendingCall pcall = data->view()->asyncCall("contactsDetails",
                                                      data->fields(),
                                                      data->offset(),
@@ -394,7 +394,7 @@ void GaleraContactsService::onVCardsParsed(QList<QContact> contacts)
         if (!contact->isEmpty()) {
             QContactGuid detailId = contact->detail<QContactGuid>();
             GaleraEngineId *engineId = new GaleraEngineId(detailId.guid(), m_managerUri);
-            QContactId newId = QContactId(engineId);
+            QContactId newId = QContactId(engineId->managerUri(), engineId->toByteArray());
             contact->setId(newId);
         }
     }
@@ -431,7 +431,7 @@ void GaleraContactsService::fetchContactsGroupsContinue(QContactFetchRequestData
         Q_FOREACH(const Source &source, reply.value()) {
             galera::GaleraEngineId *engineId = new galera::GaleraEngineId(QString("source@%1").arg(source.id()),
                                                                           m_managerUri);
-            QContactId id = QContactId(engineId);
+            QContactId id = QContactId(engineId->managerUri(), engineId->toByteArray());
             QContact c = source.toContact(id);
             if (source.isPrimary()) {
                 contacts.prepend(c);
@@ -590,7 +590,7 @@ void GaleraContactsService::createContactsDone(QContactSaveRequestData *data,
             QContact contact = VCardParser::vcardToContact(vcard);
             QContactGuid detailId = contact.detail<QContactGuid>();
             GaleraEngineId *engineId = new GaleraEngineId(detailId.guid(), m_managerUri);
-            QContactId newId = QContactId(engineId);
+            QContactId newId = QContactId(engineId->managerUri(), engineId->toByteArray());
             contact.setId(newId);
             data->updateCurrentContact(contact);
         } else {
@@ -900,10 +900,21 @@ void GaleraContactsService::addRequest(QtContacts::QContactAbstractRequest *requ
         case QContactAbstractRequest::RelationshipSaveRequest:
             qDebug() << "Not implemented: RelationshipSaveRequest";
             break;
-        break;
+        case QContactAbstractRequest::CollectionFetchRequest:
+            QContactManagerEngine::updateCollectionFetchRequest(qobject_cast<QContactCollectionFetchRequest*>(request),
+                                                                  m_collections.values(),
+                                                                  QContactManager::NoError,
+                                                                  QContactAbstractRequest::FinishedState);
+            break;
+        case QContactAbstractRequest::CollectionRemoveRequest:
+            qDebug() << "Not implemented: CollectionRemoveRequest";
+            break;
+        case QContactAbstractRequest::CollectionSaveRequest:
+            qDebug() << "Not implemented: CollectionSaveRequest";
+            break;
 
         default: // unknown request type.
-        break;
+            break;
     }
 }
 
@@ -921,9 +932,18 @@ QList<QContactId> GaleraContactsService::parseIds(const QStringList &ids) const
     QList<QContactId> contactIds;
     Q_FOREACH(QString id, ids) {
         GaleraEngineId *engineId = new GaleraEngineId(id, m_managerUri);
-        contactIds << QContactId(engineId);
+        contactIds << QContactId(engineId->managerUri(), engineId->toByteArray());
     }
     return contactIds;
+}
+
+QList<QContactDetail::DetailType> GaleraContactsService::parseTypes(const QStringList &ids) const {
+    QList<QContactDetail::DetailType> result;
+
+    for (auto l : ids) {
+        result << QContactDetail::DetailType::TypeName;
+    }
+    return result;
 }
 
 void GaleraContactsService::onContactsAdded(const QStringList &ids)
@@ -938,7 +958,7 @@ void GaleraContactsService::onContactsRemoved(const QStringList &ids)
 
 void GaleraContactsService::onContactsUpdated(const QStringList &ids)
 {
-    Q_EMIT contactsUpdated(parseIds(ids));
+    Q_EMIT contactsUpdated(parseIds(ids), parseTypes(ids));
 }
 
 } //namespace

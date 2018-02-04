@@ -23,10 +23,11 @@
 #include <QtContacts/QContact>
 #include <QtContacts/QContactManagerEngine>
 #include <QtContacts/QContactManagerEngineFactoryInterface>
-#include <QtContacts/qcontactengineid.h>
 #include <QtContacts/QContactAbstractRequest>
 
 #include <QtDBus/QDBusInterface>
+
+#include "qcontact-engineid.h"
 
 namespace galera
 {
@@ -39,7 +40,7 @@ class GaleraEngineFactory : public QtContacts::QContactManagerEngineFactory
 public:
     QtContacts::QContactManagerEngine* engine(const QMap<QString, QString> &parameters, QtContacts::QContactManager::Error*);
     QString managerName() const;
-    QtContacts::QContactEngineId* createContactEngineId(const QMap<QString, QString> &parameters, const QString &engineIdString) const;
+    GaleraEngineId* createContactEngineId(const QMap<QString, QString> &parameters, const QString &engineIdString) const;
 };
 
 class GaleraManagerEngine : public QtContacts::QContactManagerEngine
