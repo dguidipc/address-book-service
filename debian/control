@@ -5,7 +5,6 @@ Maintainer: Adam Boardman <adamboardman@gmail.com>
 Build-Depends: cmake (>= 2.8.9),
                dbus-test-runner,
                debhelper (>= 9),
-               dh-translations,
                gobject-introspection (>= 1.31.0-2~),
                libaccounts-glib-dev,
                libaccounts-qt5-dev,
