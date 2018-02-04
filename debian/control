@@ -3,6 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Adam Boardman <adamboardman@gmail.com>
 Build-Depends: cmake (>= 2.8.9),
+               extra-cmake-modules,
                dbus-test-runner,
                debhelper (>= 9),
                gobject-introspection (>= 1.31.0-2~),
