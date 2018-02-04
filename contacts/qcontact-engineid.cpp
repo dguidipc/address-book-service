@@ -18,6 +18,7 @@
 
 #include "qcontact-engineid.h"
 
+#include <QtContacts>
 #include <QtCore/QDebug>
 
 using namespace QtContacts;
