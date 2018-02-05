@@ -1,4 +1,4 @@
-address-book-service (0.1.2~git20180204~0.1) stretch; urgency=medium
+address-book-service (0.1.2.1) stretch; urgency=medium
 
   * Latest address-book-service from UBPorts with some patches for use with debian stretch.
 
