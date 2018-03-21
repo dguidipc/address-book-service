@@ -25,9 +25,9 @@ Build-Depends: cmake (>= 2.8.9),
                qtpim5-dev,
                valac (>= 0.20),
 Standards-Version: 3.9.8
-Homepage: https://github.com/adamboardman/address-book-service
-Vcs-Git: https://github.com/adamboardman/address-book-service.git
-Vcs-Browser: https://github.com/adamboardman/address-book-service.git
+Homepage: https://github.com/gemian/address-book-service
+Vcs-Git: https://github.com/gemian/address-book-service.git
+Vcs-Browser: https://github.com/gemian/address-book-service.git
 
 Package: address-book-service
 Architecture: any
