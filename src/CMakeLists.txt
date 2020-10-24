@@ -30,3 +30,5 @@ include_directories(
 
 install(TARGETS ${CONTACTS_SERVICE_BIN}
         RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_LIBEXECDIR})
+
+install(FILES address-book-service DESTINATION ${CONTACTS_SERVICE_BIN}/../lib/aarch64-linux-gnu/address-book-service)
