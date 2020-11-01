@@ -379,9 +379,9 @@ QtContacts::QContactDetail QIndividual::getPersonaBirthday(FolksPersona *persona
     QContactBirthday detail;
     GDateTime* datetime = folks_birthday_details_get_birthday(FOLKS_BIRTHDAY_DETAILS(persona));
     if (datetime) {
-        QDate date(g_date_time_get_year(datetime), g_date_time_get_month(datetime), g_date_time_get_day_of_month(datetime));
-        QTime time(g_date_time_get_hour(datetime), g_date_time_get_minute(datetime), g_date_time_get_second(datetime));
-        detail.setDateTime(QDateTime(date, time));
+        qint64 unixUtc = g_date_time_to_unix(datetime);
+        QDateTime dt = QDateTime::fromMSecsSinceEpoch(unixUtc * 1000);
+        detail.setDateTime(dt);
         detail.setDetailUri(QString("%1.1").arg(index));
     }
     return detail;
@@ -741,42 +741,6 @@ QList<QtContacts::QContactDetail> QIndividual::getPersonaUrls(FolksPersona *pers
     return details;
 }
 
-QList<QtContacts::QContactDetail> QIndividual::getPersonaNotes(FolksPersona *persona,
-                                                               QtContacts::QContactDetail *preferredNote,
-                                                               int index) const
-{
-    if (!FOLKS_IS_NOTE_DETAILS(persona)) {
-        return QList<QtContacts::QContactDetail>();
-    }
-
-    QList<QtContacts::QContactDetail> details;
-    GeeSet *notes = folks_note_details_get_notes(FOLKS_NOTE_DETAILS(persona));
-    if (!notes) {
-        return details;
-    }
-    GeeIterator *iter = gee_iterable_iterator(GEE_ITERABLE(notes));
-    int fieldIndex = 1;
-
-    while(gee_iterator_next(iter)) {
-        FolksAbstractFieldDetails *fd = FOLKS_ABSTRACT_FIELD_DETAILS(gee_iterator_get(iter));
-        const char *note = (const char*) folks_abstract_field_details_get_value(fd);
-
-        QContactNote detail;
-        detail.setNote(qStringFromGChar(note));
-
-        bool isPref = false;
-        DetailContextParser::parseParameters(detail, fd, &isPref);
-        detail.setDetailUri(QString("%1.%2").arg(index).arg(fieldIndex++));
-        if (isPref) {
-            *preferredNote = detail;
-        }
-        g_object_unref(fd);
-        details << detail;
-    }
-    g_object_unref(iter);
-    return details;
-}
-
 QtContacts::QContactDetail QIndividual::getPersonaFavorite(FolksPersona *persona, int index) const
 {
     if (!FOLKS_IS_FAVOURITE_DETAILS(persona)) {
@@ -920,6 +884,7 @@ QtContacts::QContact &QIndividual::contact()
         updatePersonas();
         // avoid change on m_contact pointer until the contact is fully loaded
         QContact contact;
+        contact.setId(QContactId("qtcontacts:galera:", m_id.toUtf8()));
         updateContact(&contact);
         m_contact = new QContact(contact);
     }
@@ -1040,13 +1005,6 @@ void QIndividual::updateContact(QContact *contact) const
                                 VCardParser::PreferredActionNames[QContactUrl::Type],
                                 prefDetail,
                                 !wPropList.contains("urls"));
-
-        details = getPersonaNotes(persona, &prefDetail, personaIndex);
-        appendDetailsForPersona(contact,
-                                details,
-                                VCardParser::PreferredActionNames[QContactNote::Type],
-                                prefDetail,
-                                !wPropList.contains("notes"));
 
         details = getPersonaExtendedDetails (persona, personaIndex);
         appendDetailsForPersona(contact,

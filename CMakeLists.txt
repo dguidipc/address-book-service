@@ -1,15 +1,11 @@
 project(address-book-service C CXX)
 
 cmake_minimum_required(VERSION 2.8.9)
-
-find_package(ECM REQUIRED NO_MODULE)
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 include(FindPkgConfig)
 # Standard install paths
 include(GNUInstallDirs)
-include(KDEInstallDirs)
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5DBus REQUIRED)
@@ -32,8 +28,6 @@ pkg_check_modules(EDATASERVER REQUIRED libedataserver-1.2>=3.8)
 pkg_check_modules(FOLKS REQUIRED folks>=0.9.0)
 pkg_check_modules(FOLKS_EDS REQUIRED folks-eds)
 pkg_check_modules(GLIB_ACCOUNTS REQUIRED libaccounts-glib)
-#pkg_check_modules(MESSAGING_MENU REQUIRED messaging-menu)
-#pkg_check_modules(URL_DISPATCHER REQUIRED url-dispatcher-1)
 pkg_check_modules(AccountsQt5 REQUIRED accounts-qt5)
 pkg_check_modules(LIBNOTIFY REQUIRED libnotify)
 
@@ -98,7 +92,6 @@ add_custom_command(TARGET check
 		   COMMAND ctest -V
 		   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-add_subdirectory(3rd_party)
 add_subdirectory(common)
 add_subdirectory(eds-extension)
 add_subdirectory(lib)
@@ -110,10 +103,9 @@ add_subdirectory(dbus)
 add_subdirectory(po)
 #add_subdirectory(eds-test)
 
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL "ppc")
-    # Some tests fail when running on PPPC check bug #1294229
-    message(STATUS "Tests disable for ppc")
-else()
+OPTION(ENABLE_TESTS "Build tests" ON)
+if(ENABLE_TESTS)
+    add_subdirectory(3rd_party)
     add_subdirectory(tests)
 endif()
 set(TEST_DATA_DIR "${CMAKE_SOURCE_DIR}/tests/data")

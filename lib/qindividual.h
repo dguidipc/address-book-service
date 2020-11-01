@@ -141,9 +141,6 @@ private:
     QList<QtContacts::QContactDetail> getPersonaUrls    (FolksPersona *persona,
                                                          QtContacts::QContactDetail *preferredUrl,
                                                          int index) const;
-    QList<QtContacts::QContactDetail> getPersonaNotes    (FolksPersona *persona,
-                                                          QtContacts::QContactDetail *preferredNote,
-                                                          int index) const;
 
     static void avatarCacheStoreDone(GObject *source, GAsyncResult *result, gpointer data);
 

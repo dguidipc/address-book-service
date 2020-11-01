@@ -61,7 +61,8 @@ Description: Low-level tests for dummy-backend
 Package: qtcontact5-galera
 Architecture: any
 Multi-Arch: same
-Depends: ${misc:Depends},
+Depends: address-book-service (= ${binary:Version}),
+         ${misc:Depends},
          ${shlibs:Depends},
 Description: QtContacts backend for galera contact service.
  A QContactEngine implementation using address-book-service.

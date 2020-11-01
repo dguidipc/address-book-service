@@ -4,7 +4,7 @@ set(QCONTACTS_BACKEND qtcontacts_galera)
 
 set(QCONTACTS_BACKEND_SRCS
     qcontact-backend.cpp
-    qcontact-engineid.cpp
+    qcontactcollectionfetchrequest-data.cpp
     qcontactfetchrequest-data.cpp
     qcontactfetchbyidrequest-data.cpp
     qcontactremoverequest-data.cpp
@@ -15,7 +15,7 @@ set(QCONTACTS_BACKEND_SRCS
 
 set(QCONTACTS_BACKEND_HDRS
     qcontact-backend.h
-    qcontact-engineid.h
+    qcontactcollectionfetchrequest-data.h
     qcontactfetchrequest-data.h
     qcontactfetchbyidrequest-data.h
     qcontactremoverequest-data.h
@@ -36,7 +36,6 @@ include_directories(
 
 target_link_libraries(${QCONTACTS_BACKEND}
     galera-common
-    ${LibPhoneNumber_LIBRARIES}
     Qt5::Core
     Qt5::Contacts
     Qt5::DBus
@@ -45,14 +44,6 @@ target_link_libraries(${QCONTACTS_BACKEND}
 
 add_definitions(-std=gnu++11)
 
-execute_process(
-    COMMAND qmake -query QT_INSTALL_PLUGINS
-    OUTPUT_VARIABLE QT_INSTALL_PLUGINS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+set(QT_INSTALL_PLUGINS "${CMAKE_INSTALL_LIBDIR}/qt5/plugins")
 
-if(NOT ${QT_INSTALL_PLUGINS} STREQUAL "")
 install(TARGETS ${QCONTACTS_BACKEND} LIBRARY DESTINATION ${QT_INSTALL_PLUGINS}/contacts)
-else(NOT ${QT_INSTALL_PLUGINS} STREQUAL "")
-install(TARGETS ${QCONTACTS_BACKEND} LIBRARY DESTINATION ${QT_PLUGIN_INSTALL_DIR}/contacts)
-endif(NOT ${QT_INSTALL_PLUGINS} STREQUAL "")

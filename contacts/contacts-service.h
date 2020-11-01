@@ -43,6 +43,7 @@ using namespace QtContacts; // necessary for signal signatures
 
 namespace galera {
 
+class QContactCollectionFetchRequestData;
 class QContactRequestData;
 class QContactSaveRequestData;
 class QContactFetchRequestData;
@@ -71,7 +72,8 @@ public:
 Q_SIGNALS:
     void contactsAdded(QList<QContactId> ids);
     void contactsRemoved(QList<QContactId> ids);
-    void contactsUpdated(QList<QContactId> ids, QList<QContactDetail::DetailType> types);
+    void contactsUpdated(QList<QContactId> ids,
+                         const QList<QContactDetail::DetailType> &typesChanged);
     void serviceChanged();
 
 private Q_SLOTS:
@@ -92,13 +94,15 @@ private:
     QSharedPointer<QDBusInterface> m_iface;
     QString m_serviceName;
     QList<QContactRequestData*> m_runningRequests;
-    QMap<QString, QtContacts::QContactCollection> m_collections;
 
     Q_INVOKABLE void initialize();
     Q_INVOKABLE void deinitialize();
 
     bool isOnline() const;
 
+    void fetchCollections(QtContacts::QContactCollectionFetchRequest *request);
+    void fetchCollectionsContinue(QContactCollectionFetchRequestData *data,
+                                  QDBusPendingCallWatcher *call);
     void fetchContacts(QtContacts::QContactFetchRequest *request);
     void fetchContactsContinue(QContactFetchRequestData *data,
                                QDBusPendingCallWatcher *call);
@@ -125,8 +129,6 @@ private:
     void destroyRequest(QContactRequestData *request);
 
     QList<QContactId> parseIds(const QStringList &ids) const;
-
-    QList<QContactDetail::DetailType> parseTypes(const QStringList &ids) const;
 };
 
 }
